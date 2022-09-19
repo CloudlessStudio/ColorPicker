@@ -1,0 +1,167 @@
+import pygame
+import sys
+from pygame.locals import *
+from tkinter import *
+from tkinter import colorchooser
+import pyperclip
+
+pygame.init()
+WIDTH = 800
+HEIGHT = 400
+WINDOW = pygame.display.set_mode((WIDTH,HEIGHT))
+pygame.display.set_caption("Color Picker")
+icon = pygame.image.load("images\C_icon.png")
+pygame.display.set_icon(icon)
+WINDOW.fill((255,255,255))
+myfont = pygame.font.Font("fonts\Pixellari.ttf", 25)
+rgb_text = "255,255,255"
+hex_text = "#FFFFFF"
+pop = pygame.mixer.Sound("Sound\\pop2.ogg")
+FPS = pygame.time.Clock()
+
+def image_load(path):
+    img = pygame.image.load("images//"+path)
+    return img
+
+
+def rgb_val():
+    rgb = []
+    color = WINDOW.get_at(pygame.mouse.get_pos())
+    for each in color:
+        rgb.append(each)
+    rgb.remove(rgb[3])
+    # for later        rgb_str = "(" +str(rgb[0])+","+str(rgb[1])+","+str(rgb[2])+")"
+    return rgb
+
+def text_renders(font, text):
+    return font.render(text, True, (0,0,0))
+
+def box(color):
+    color_box = pygame.draw.rect(WINDOW, color, (620,70, 40,40))
+
+def box_outline():
+    pygame.draw.rect(WINDOW, (0,0,0), (620,70,40,40), 4)
+
+def box_RGB(color):
+    color_box = pygame.draw.rect(WINDOW, color, (600,180, 200,40))
+
+def box_HEX(color):
+    color_box = pygame.draw.rect(WINDOW, color, (600, 280, 200, 40))
+
+def copy_box(color):
+    color_box = pygame.draw.rect(WINDOW, color, (530, 350, 200, 40))
+
+def rgb_str():
+    rgb = []
+    rgb_str = ""
+    i = 0
+    color = WINDOW.get_at(pygame.mouse.get_pos())
+    for each in color:
+        rgb.append(each)
+    rgb.remove(rgb[3])
+    for each in rgb:
+        rgb_str += str(each)
+        i+=1
+        if i != 3:
+            rgb_str += ","
+
+    print(rgb_str)
+    return rgb_str
+
+def hex_val(rgb_list):
+    hexcode = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"]
+    hex ='#'
+    cols = []
+    colors = rgb_list
+    i =0
+    for val in colors:
+      if val <0:
+        colors[i]=0
+      if val >255:
+        colors[i]=255
+      i+=1
+    print(colors)
+    for each in colors:
+        dec1 = each/16
+        n1 = int(dec1)
+        n2 = int((dec1-n1)*16)
+        cols.append(n1)
+        cols.append(n2)
+    for each in cols:
+      hex += hexcode[each]
+    print(hex)
+    return hex
+
+def copy_rgb(rgb):
+    if rgb != "":
+        pyperclip.copy(rgb)
+
+def copy_hex(hex):
+    if hex != "":
+        pyperclip.copy(hex)
+
+def clipboardRGB(loc):
+    CRGB = image_load("ClipBoard.png")
+    WINDOW.blit(CRGB, loc)
+
+def clipboardHEX(loc):
+    CRGB = image_load("ClipBoard.png")
+    WINDOW.blit(CRGB, loc)
+
+
+
+
+#main loop
+
+
+while True:
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+        if event.type == MOUSEBUTTONDOWN:
+
+            if pygame.mouse.get_pos()[0] < 401:
+                if pygame.mouse.get_pressed():
+                    copy_box((255,255,255))
+                    RGB_COLOR = rgb_val()
+                    hex_COLOR = hex_val(RGB_COLOR)
+                    rgb_text = rgb_str()
+                    box(RGB_COLOR)
+                    box_HEX((255,255,255))
+                    box_RGB((255,255,255))
+                    WINDOW.blit(text_renders(myfont, rgb_text), (600, 180))
+                    rgb_str()
+
+                    WINDOW.blit(text_renders(myfont, str(hex_COLOR)), (600,280))
+                    hex_text = str(hex_COLOR)
+            if abs(500 - pygame.mouse.get_pos()[0]) <= 16 and abs(180 - pygame.mouse.get_pos()[1]) <= 16:
+                copy_box((255,255,255))
+                copy_rgb(rgb_text)
+                WINDOW.blit(text_renders(myfont, "RGB COPIED!"), (530, 350))
+                pop.play()
+
+
+
+            if abs(500 - pygame.mouse.get_pos()[0]) <= 16 and abs(280 - pygame.mouse.get_pos()[1]) <= 16:
+                copy_box((255,255,255))
+                copy_hex(hex_text)
+                WINDOW.blit(text_renders(myfont, "HEX COPIED!"), (530, 350))
+                pop.play()
+
+
+    WINDOW.blit(image_load("HSVMAP.png"), (0,0))
+    WINDOW.blit(text_renders(myfont, "Color:"), (505, 80))
+    WINDOW.blit(text_renders(myfont, "RGB:"), (520, 180))
+    WINDOW.blit(text_renders(myfont, "HEX:"), (520, 280))
+    box_outline()
+    clipboardRGB((500,180))
+    clipboardHEX((500,280))
+
+    pygame.display.update()
+    FPS.tick(60)
