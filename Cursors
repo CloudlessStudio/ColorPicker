@@ -1,0 +1,40 @@
+import pygame
+crosshair = (       #16x16 cursor
+"                ",
+"                ",
+"                ",
+"        XX      ",
+"        XX      ",
+"        XX      ",
+"                ",
+"    XXX    XXX  ",
+"    XXX    XXX  ",
+"                ",
+"        XX      ",
+"        XX      ",
+"        XX      ",
+"                ",
+"                ",
+"                "
+)
+hand = (
+"                ",
+"   XXX          ",
+"   X.X          ",
+"   X.X          ",
+"   X.XX         ",
+"   X.X.XX       ",
+"   X.X.X.XXX    ",
+"   X...X X X    ",
+" XXX........X   ",
+" X..........X   ",
+" X..........X   ",
+"  X.........X   ",
+"   X........X   ",
+"    X......X    ",
+"     XXXXXX     ",
+"                "
+)
+
+XCursor = pygame.cursors.compile(crosshair, black = "X", white = ".", xor="o")
+HandCursor = pygame.cursors.compile(hand, black = "X", white = ".", xor="o")
